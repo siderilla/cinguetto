@@ -1,7 +1,8 @@
 <div>
-  @for (cinguettio of firebaseServ.cinguettii(); track $index as i) {
+  @for (cinguettio of firebaseServ.cinguettii(); track $index) {
     <div>
       <span>{{cinguettio.text}}</span>
+      <span>{{cinguettio.creationTime.toDate()}}</span>
     </div>
   }
 </div>

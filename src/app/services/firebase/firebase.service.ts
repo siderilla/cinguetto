@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { initializeApp } from "firebase/app";
-import { getFirestore, query, getDocs, collection } from "firebase/firestore";
+import { getFirestore, query, getDocs, collection, onSnapshot } from "firebase/firestore";
 import { Cinguettio } from '../../model/cinguettio';
 
 @Injectable({
@@ -30,18 +30,28 @@ export class FirebaseService {
   }
 
   async getAllCinguettiii() {
-    const newArray: Cinguettio[] = [];
+    const unsub = onSnapshot(query(collection(this.db, "cinguettii")), (snap) => {
+      const newArray: Cinguettio[] = [];
 
-    const querySnapshot = await getDocs(collection(this.db, "cinguettii"));
-    querySnapshot.forEach((doc) => {
+      snap.forEach((doc) => {
+        const newCinguettio = doc.data() as Cinguettio;
+        newCinguettio.id = doc.id;
+        newArray.push(newCinguettio);
+      });
+      this.cinguettii.update(() => newArray);
+      // const querySnapshot = await getDocs(collection(this.db, "cinguettii"));
 
-      const newCinguettio = doc.data() as Cinguettio;
 
-      newCinguettio.id = doc.id;
+      // querySnapshot.forEach((doc) => {
 
-      newArray.push(newCinguettio);
+      //   const newCinguettio = doc.data() as Cinguettio;
 
+      //   newCinguettio.id = doc.id;
+
+      //   newArray.push(newCinguettio);
+
+      // });
+      // this.cinguettii.update(() => newArray); //aggiorno l'array di cinguettii
     });
-    this.cinguettii.update(() => newArray); //aggiorno l'array di cinguettii
-  }
+}
 }
